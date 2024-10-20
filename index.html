@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Todo List</title>
+    <link rel="stylesheet" href="index.css">
+  </head>
+  <body>
+    <div id="root"></div>
+  </body>
+  <script src="https://www.unpkg.com/react@18.2.0/umd/react.development.js"></script>
+  <script src="https://www.unpkg.com/react-dom@18.2.0/umd/react-dom.development.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <script type="text/babel">
+
+    function App(){
+
+        const [todoArr,setTodoArr]=React.useState([])
+        const [inpValue, setInputValue]=React.useState("")
+
+        // adding task in the todoArr
+        function addTodoFun(e){
+
+            e.preventDefault()
+            if ((inpValue.trim())!==""){
+                const newTodo={task:inpValue, marked:false}
+                setTodoArr([...todoArr, newTodo])
+                setInputValue("")
+            }
+        }
+
+        function checkedToggleFun(index){
+            const toggledTodoArr=todoArr.map((val, i)=>
+                i===index ? {...val, marked : !val.marked} : val
+            )
+            setTodoArr(toggledTodoArr)
+        }
+
+        function deleteTodoFun(index){
+            const deletedTodoArr=todoArr.filter((val, i)=>i!==index)
+            setTodoArr(deletedTodoArr)
+        }
+
+        return (
+        <div id="container">
+            <h1>Todos List</h1>
+            {/*form of input and add button*/}
+            <form onSubmit={addTodoFun}>
+                <input type="text" name="todos" id="todosInp" placeholder="Enter a new task" value={inpValue} onChange={(e)=>setInputValue(e.target.value)}/>
+                <button id="addTodoBtn" type="submit">Add</button>
+            </form>
+            {/*display todos*/}
+            <div id="todos_box">
+                {
+                    todoArr.map((val, index)=>(
+                        <div key={index} className={val.marked ? 'marked' : ''}>
+                            <input type="checkbox" checked={val.marked} onChange={()=>checkedToggleFun(index)}/>
+                            <p className="task">{val.task}</p>
+                            <button id="deleteBtn" onClick={()=>deleteTodoFun(index)}>Delete</button>
+                        </div>
+                    ))
+                }
+            </div>
+        </div>
+        )
+    }
+    const root=ReactDOM.createRoot(document.getElementById("root"))
+    root.render(<App/>)
+  </script>
+</html>
